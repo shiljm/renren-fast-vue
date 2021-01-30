@@ -20,7 +20,7 @@
               <el-input v-model="spu.spuDescription"></el-input>
             </el-form-item>
             <el-form-item label="选择分类" prop="catalogId">
-              <category-cascader></category-cascader>
+              <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
             </el-form-item>
             <el-form-item label="选择品牌" prop="brandId">
               <brand-select></brand-select>
@@ -351,10 +351,11 @@ import BrandSelect from "../common/brand-select";
 import MultiUpload from "@/components/upload/multiUpload";
 export default {
   //import引入的组件需要注入到对象中才能使用
-  components: { CategoryCascader, BrandSelect, MultiUpload },
+  components: { CategoryCascader, BrandSelect, MultiUpload},
   props: {},
   data() {
     return {
+      catelogPath: [],
       catPathSub: null,
       brandIdSub: null,
       uploadDialogVisible: false,
@@ -458,13 +459,13 @@ export default {
         brandId: "",
         weight: "",
         publishStatus: 0,
-        decript: [], 
-        images: [], 
+        decript: [],
+        images: [],
         bounds: {
           buyBounds: 0,
           growBounds: 0
         },
-        baseAttrs: [], 
+        baseAttrs: [],
         skus: []
       };
     },
@@ -780,7 +781,9 @@ export default {
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getMemberLevels()
+  },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
